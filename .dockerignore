@@ -1,0 +1,33 @@
+# .dockerignore file for DEX project
+
+# Build artifacts
+bin/
+dist/
+build/
+
+# Git directory
+.git/
+
+# IDE files
+.vscode/
+.idea/
+
+# Environment files
+.env.local
+.env.production
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# Test files
+*_test.go
+test/
+
+# Documentation
+README.md
+docs/

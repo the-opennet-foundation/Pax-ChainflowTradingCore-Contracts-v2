@@ -1,0 +1,243 @@
+version: '3.8'
+
+services:
+  # =============================================================================
+  # PostgreSQL Databases (5 total)
+  # =============================================================================
+  
+  postgres-public-ledger:
+    image: postgres:16-alpine
+    container_name: chainflow-postgres-public-ledger
+    environment:
+      POSTGRES_DB: chainflow_public_ledger
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-public-ledger-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d chainflow_public_ledger"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chainflow-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+
+  postgres-account-manager:
+    image: postgres:16-alpine
+    container_name: chainflow-postgres-account-manager
+    environment:
+      POSTGRES_DB: chainflow_account_manager
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-account-manager-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d chainflow_account_manager"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chainflow-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  postgres-system-manager:
+    image: postgres:16-alpine
+    container_name: chainflow-postgres-system-manager
+    environment:
+      POSTGRES_DB: chainflow_system_manager
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-system-manager-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d chainflow_system_manager"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chainflow-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  postgres-risk-engine:
+    image: postgres:16-alpine
+    container_name: chainflow-postgres-risk-engine
+    environment:
+      POSTGRES_DB: chainflow_risk_engine
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres-risk-engine-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d chainflow_risk_engine"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chainflow-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  postgres-market-manager:
+    image: postgres:16-alpine
+    container_name: chainflow-postgres-market-manager
+    environment:
+      POSTGRES_DB: chainflow_market_manager
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres-market-manager-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d chainflow_market_manager"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chainflow-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  # =============================================================================
+  # Scylla Database (Single node for development)
+  # =============================================================================
+  
+  scylla:
+    image: scylladb/scylla:5.4
+    container_name: chainflow-scylla
+    command: --smp 2 --memory 2G --overprovisioned 1
+    ports:
+      - "9042:9042"  # CQL
+      - "9160:9160"  # Thrift (legacy)
+      - "10000:10000"  # REST API
+    volumes:
+      - scylla-data:/var/lib/scylla
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'SELECT * FROM system.local' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - chainflow-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  # =============================================================================
+  # Redis (For SystemManager feature flags & caching)
+  # =============================================================================
+  
+  redis:
+    image: redis:7-alpine
+    container_name: chainflow-redis
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - chainflow-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # =============================================================================
+  # pgAdmin (Optional - Database Management UI)
+  # =============================================================================
+  
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: chainflow-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@chainflow.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - chainflow-network
+    depends_on:
+      - postgres-public-ledger
+      - postgres-account-manager
+      - postgres-system-manager
+      - postgres-risk-engine
+      - postgres-market-manager
+
+networks:
+  chainflow-network:
+    driver: bridge
+
+volumes:
+  postgres-public-ledger-data:
+  postgres-account-manager-data:
+  postgres-system-manager-data:
+  postgres-risk-engine-data:
+  postgres-market-manager-data:
+  scylla-data:
+  redis-data:
+  pgadmin-data:

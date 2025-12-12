@@ -1,0 +1,23 @@
+{
+  "network": "paxeer-network",
+  "chainId": "229",
+  "deployer": "0x41872dd62F7C9f321591fec24E5Dfdb736786a3D",
+  "timestamp": "2025-11-15T08:40:53.346Z",
+  "contracts": {
+    "operatorRegistry": "0x8928E2923759F5cDe8DafFDbd50ebd3cf976Bf23",
+    "vault": "0x8439ff13e9e746b0a5F6377D4641194EfFF70288",
+    "capitalPool": "0x93D5498d2E6F6aB9bC1eFd400766Cee97914b31a",
+    "traderRegistry": "0x48aDF288980C553782560088F905698c1B918de4",
+    "tradeLedger": "0xD871Ba4d4519F355fb44faE5D0BFaE85d595DA82",
+    "payoutManager": "0x4781b194d85C840e0A70615F7AEE399c0878c901",
+    "governanceManager": "0x1c10d958BCA08FE47186E9C5151e1924ccedA0d3",
+    "insuranceFund": "0xAeE307E4a6CB6418b934D3a77923e6b9dB8E4241",
+    "keeperIncentive": "0x61A5e8a677B07Ad3a9eF46FB1169Df695af55294",
+    "cryptoOracle": "0xf048fCF1bE740ADd04fEf55Eb6E5A54053dB1d07",
+    "stockOracle": "0xabeAeaF69e3acCcCe6A7c1c1Ba7Ffe62141A6Abb",
+    "forexOracle": "0x9C94b7E63b6e1D73b060247D4A1e3918c1ec6681",
+    "commodityOracle": "0x3322ec1A7a0bb55b724b4eEBaCA4301c402b2A48",
+    "indexOracle": "0xBF02CD7cD054F677BC536A808dED78b8A195D2D5",
+    "oracleRegistry": "0xA9db64BAE3E975D4034f6eD6B6B1f7222D34E1a4"
+  }
+}

@@ -1,0 +1,46 @@
+# This workflow automates testing and publishing the CTM package to NPM
+
+name: Publish CTM Package to NPM
+
+# Triggers the workflow on push events to the main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    # The job will run on the latest version of Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checks-out your repository so the job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Sets up Node.js for the job
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # Specify the Node.js version
+          registry-url: 'https://registry.npmjs.org' # Set the NPM registry
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Run tests to ensure code quality before publishing
+      - name: Run Hardhat tests
+        run: npx hardhat test
+
+      # 5. Build the NPM package using your custom script
+      - name: Build NPM package
+        run: node scripts/build-package.js
+
+      # 6. Publish the package to NPM from the build directory
+      - name: Publish to NPM
+        working-directory: ./ctm-package # The directory your build script creates
+        run: npm publish
+        env:
+          # Use your secret NPM token for authentication
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

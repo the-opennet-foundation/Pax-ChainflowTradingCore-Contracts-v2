@@ -1,0 +1,32 @@
+{
+  "name": "chain-flow-v2",
+  "version": "2.0.0",
+  "description": "Smart contracts for ChainFlow-v2",
+  "main": "",
+  "scripts": {
+    "test": "hardhat test",
+    "compile": "hardhat compile"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.6"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0",
+    "@openzeppelin/contracts-upgradeable": "^5.4.0",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1",
+    "axios": "^1.11.0",
+    "cassandra-driver": "^4.8.0",
+    "chai": "^6.2.1",
+    "cors": "^2.8.5",
+    "ethers": "^6.15.0",
+    "express": "^5.1.0",
+    "keccak256": "^1.0.6",
+    "mysql2": "^3.14.3",
+    "package.json": "link:@openzeppelin/contracts-upgradeable/package.json",
+    "pg": "^8.16.3"
+  }
+}
